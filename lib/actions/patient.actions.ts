@@ -1,42 +1,39 @@
 "use server";
 
 import { parseStringify } from "../utils";
-// models/User.js
+import User from '../../db/models/User';
+
 
 const { DataTypes } = require('sequelize');
-const sequelize = require('../db/config');
+const sequelize = require('../../db/config');
+import checkUser from '../../db/controllers/UserController';
 
 // CREATE APPWRITE USER
 
-export const createUser = async (user: CreateUserParams) => {
-
+export const createUser = async (user: { name: string; email: string; phone: string }) => {
   try {
+      // Önce veritabanında bu e-posta ile kayıtlı bir kullanıcı olup olmadığını kontrol edin
+      const existingUser = await User.findOne({ where: { email: user.email } });
 
-    //Tabloyu tanımla burada :todo
-    //tabloya insert işlemi yap
-    //existing user ise kaydı getir ve routing yap
+      // Eğer kullanıcı varsa, mevcut kullanıcıyı ve durumu döndürün
+      if (existingUser) {
+          return parseStringify(existingUser);
+      }
 
-    const jane = await User.create({ firstName: 'Jane', lastName: 'Doe' });
-
-
-    return parseStringify(jane);
+      // Eğer kullanıcı yoksa, yeni kullanıcı oluşturun
+      const newUser = await User.create({ name: user.name, email: user.email, phone: user.phone });
+      return parseStringify(newUser);
   } catch (error: any) {
-    // Check existing user
-    if (error && error?.code === 409) {
-      const existingUser = await users.list([
-        Query.equal("email", [user.email]),
-      ]);
-
-      return existingUser.users[0];
-    }
-    console.error("An error occurred while creating a new user:", error);
+      console.error("An error occurred while creating or checking the user:", error);
+      throw error;
   }
 };
+
 
 // GET USER
 export const getUser = async (userId: string) => {
   try {
-    const user = await users.get(userId);
+    const user = await User.findOne({ where: { id: userId } });
 
     return parseStringify(user);
   } catch (error) {

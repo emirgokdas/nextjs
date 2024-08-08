@@ -1,9 +1,11 @@
 // db/config.js
-const { Sequelize } = require('sequelize');
+import { Sequelize } from 'sequelize';
 
-const sequelize = new Sequelize('nextjs', 'root', '*8sexOdr', {
+const sequelize = new Sequelize('carepulse', 'root', '@3Mir1995*', {
   host: 'localhost',
   dialect: 'mysql',
+  dialectModule: require('mysql2'),
+
 });
 
-module.exports = sequelize;
+export default sequelize;
