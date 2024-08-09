@@ -1,7 +1,7 @@
 // db/config.js
 import { Sequelize } from 'sequelize';
 
-const sequelize = new Sequelize('carepulse', 'root', '@3Mir1995*', {
+const sequelize = new Sequelize('carepulse', 'root', '', {
   host: 'localhost',
   dialect: 'mysql',
   dialectModule: require('mysql2'),
